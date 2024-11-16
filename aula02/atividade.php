@@ -16,67 +16,98 @@ $formulario = array(
         'botao_limpar_form'=>array('tipo'=> 'reset', 'nome'=> 'reset', 'label'=> 'Limpar Formulário'),
     )
 );
-function criarFormulario($formulario){
-    echo "<form action= ' " .$formulario["url_submit"]. "' method = ' ". $formulario["tipo_submit"] . ">";
-    foreach($formulario["itens"] as $id => $item){
+function criarFormulario($formulario) {
+    echo "<form id='" . $formulario['id'] . "' action='" . $formulario['url_submit'] . "' method='" . $formulario['tipo_submit'] . "'>";
+    foreach ($formulario['itens'] as $id => $item) {
         criarCampo($id, $item);
     }
     echo "</form>";
 }
 
-function criarCampo($id, $item){
+function criarCampo($id, $item) {
     echo "<div>";
-    echo "<label for='" .$id . "'> '" .$item['label'] ."</label>";
+    echo "<label for='$id'>" . $item['label'] . ":</label>";
     switch ($item['tipo']) {
-        case "text":
-        case "number":
-            echo criarInputText($id, $item);
+        case 'text':
+        case 'number':
+            criarInputText($id, $item);
             break;
-
-        case "textarea":
-            echo criarTextarea($id, $item);
+        case 'textarea':
+            criarTextarea($id, $item);
             break;
-
-        case "radio":
-        case "checkbox":
-            echo criarRadioCheckbox($id, $item);
+        case 'radio':
+        case 'checkbox':
+            criarRadioCheckbox($id, $item);
             break;
-
-        case "select":
-            echo criarSelect($id, $item);
+        case 'select':
+            criarSelect($id, $item);
             break;
-
-        case "submit":
-        case "reset":
-            echo criarBotao($id, $item);
+        case 'submit':
+        case 'reset':
+            criarBotao($id, $item);
             break;
     }
     echo "</div>";
-
 }
 
-function criarInputText($id, $item){
-    echo "<input type = '".$item['tipo'] . "id= '".$id . "name= '" .$item['nome'] . "placeholder= '" .$item['placeholder'] . "value= '" .$item[''] . ">";
+function criarInputText($id, $item) {
+    $placeholder = '';
+    if (isset($item['placeholder'])) {
+        $placeholder = $item['placeholder'];
+    }
+    $valorPadrao = '';
+    if (isset($item['valor_padrao'])) {
+        $valorPadrao = $item['valor_padrao'];
+    }
+    echo "<input type='" . $item['tipo'] . "' id='$id' name='" . $item['nome'] . "' placeholder='$placeholder' value='$valorPadrao' required />";
 }
 
-function criarTextarea($id, $item){
-    echo "<textarea id= '" .$id . "name = '" .$item['nome'] . "placeholder= '" .$item['placeholder'] . $item['obrigatorio'] . ">" . $item[''] . "</textarea>";
+function criarTextarea($id, $item) {
+    $placeholder = '';
+    if (isset($item['placeholder'])) {
+        $placeholder = $item['placeholder'];
+    }
+    $valorPadrao = '';
+    if (isset($item['valor_padrao'])) {
+        $valorPadrao = $item['valor_padrao'];
+    }
+    echo "<textarea id='$id' name='" . $item['nome'] . "' placeholder='$placeholder'>$valorPadrao</textarea>";
 }
-function criarSelect($id, $item){
-    echo "<select id='" .$id . "name= '" .$item['nome'] .">";
-    foreach($item['opcoes'] as $opcao){
-        echo "<option value='" .$opcao . ">'" .$opcao . "</option>";
+
+function criarSelect($id, $item) {
+    $valorPadrao = '';
+    if (isset($item['valor_padrao'])) {
+        $valorPadrao = $item['valor_padrao'];
+    }
+    echo "<select id='$id' name='" . $item['nome'] . "'>";
+    foreach ($item['opcoes'] as $valor => $texto) {
+        $selected = '';
+        if ($valor == $valorPadrao) {
+            $selected = 'selected';
+        }
+        echo "<option value='$valor' $selected>$texto</option>";
+    }
+    echo "</select>";
+}
+
+function criarBotao($id, $item) {
+    echo "<button type='" . $item['tipo'] . "' id='$id' name='" . $item['nome'] . "'>" . $item['label'] . "</button>";
+}
+
+function criarRadioCheckbox($id, $item) {
+    $valorPadrao = [];
+    if (isset($item['valor_padrao'])) {
+        $valorPadrao = (array)$item['valor_padrao'];
+    }
+    foreach ($item['opcoes'] as $valor => $texto) {
+        $checked = '';
+        if (in_array($valor, $valorPadrao)) {
+            $checked = 'checked';
+        }
+        echo "<input type='" . $item['tipo'] . "' id='{$id}_$valor' name='" . $item['nome'] . "' value='$valor' $checked />";
+        echo "<label for='{$id}_$valor'>$texto</label>";
     }
 }
 
-function criarBotao($id, $item){
-    echo "<button type='" . $item['tipo'] . "id='" .$id . " name='" .$item['nome'] . ">'" .$item['label'] . "</button>";
-}
-
-function criarRadioCheckbox($id, $item){
-    foreach ($item['opcoes'] as $opcao) 
-        echo "<input type='" .$item['tipo'] . "id='" .$opcao ." name='" .$item['nome'] . "value='" .$opcao . "/>";
-        echo "<label for='" .$opcao . ">'" .$opcao. "</label>";
-    }
-
+criarFormulario($formulario);
 ?>
