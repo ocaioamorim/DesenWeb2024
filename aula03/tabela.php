@@ -57,24 +57,27 @@
         return $idade;
     }
     $filtro = array_filter($pessoas, function($pessoa, $indice){
-
         $idade = calculaIdade($pessoa['dtNascimento']);
-        if((stripos($pessoa["nome"], $_POST['nome']) >= 0 || empty($_POST['nome']))
-        && (stripos($pessoa["cidade"], $_POST['cidade']) >= 0 || empty($_POST['cidade']))
-        && ($_POST['estado'] == $pessoa["estado"] || empty($_POST['estado']))
-        && ($_POST['idade'] == $idade) || empty($_POST['idade']))
+        if(((!empty($_POST["nome"]) && stripos($pessoa["nome"],$_POST["nome"])> -1) || empty($_POST["nome"]))
+        && ((!empty($_POST["idade"]) && ($_POST["idade"]==$idade))|| empty($_POST["idade"]))
+        && ((!empty($_POST["cidade"]) && stripos($pessoa["cidade"],$_POST["cidade"])>-1)|| empty($_POST["cidade"]))
+        && ((!empty($_POST["estado"]) && ($_POST["estado"]==$pessoa["estado"]))|| empty($_POST["estado"])))
         {
             return true;
         }
         return false;
 
     }, ARRAY_FILTER_USE_BOTH);
-    echo"<table><tr><th>Nome</th><th>DtNasc</th><th>Cidade</th><th>Estado</th></tr>";
-    foreach($filtro as $f){
-        echo "<tr><td>".$f['nome']."</td>".
-        "<td>".$f['dtNascimento']."</td>".
-        "<td>" . $f['cidade']."</td>". 
-        "<td>" .$f['estado']. "</tr>";
-        }
-    echo"</table>";
+    $montarTabela = function ($dados): string{
+    $retorno = "<table border='1px solid black'><tr><th>Nome</th><th>Idade</th><th>Cidade</th><th>Estado</th></tr>";
+    foreach($dados as $chave => $elem){
+        $retorno .= "<tr><td>".$elem['nome']."</td>".
+        "<td>".$elem['dtNascimento']."</td>".
+        "<td>".$elem['estado']."</td>".
+        "<td>".$elem['cidade']."</td></tr>";
+    }
+    $retorno .= "</table>";
+    return $retorno;
+    };
+    echo $montarTabela($filtro);
 ?>
