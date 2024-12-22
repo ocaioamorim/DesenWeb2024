@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>Aula 06</title>
-    <script src="scripts.js" defer></script>
+    <script src="script.js" defer></script>
 </head>
 <body>
     <h1>Aula do dia 17/12</h1>
